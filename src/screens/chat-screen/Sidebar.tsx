@@ -84,7 +84,7 @@ export function Sidebar() {
                 <span className='text-xs text-gray-500'>{suporte.setor || 'PADRAO'}</span>
               </div>
               <div className='ml-auto text-xs bg-gray-100 rounded-full shadow-sm px-2'>
-                Leonardo
+                
               </div>
             </div>
           ))}
