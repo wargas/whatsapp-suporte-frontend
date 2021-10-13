@@ -6,6 +6,7 @@ import { ChatInput } from './ChatInput';
 import { useEffect, useState } from 'react';
 import { useSocket } from '../../providers/socket';
 import axios from 'axios';
+import { ChatContext, ChatProvider } from './ChatContext';
 
 export function ChatScreen() {
   const { chat_id = null } = useParams<{ chat_id: string }>();
@@ -35,11 +36,12 @@ export function ChatScreen() {
     }
   }
 
-  if(status === 'PENDENTE') {
-    return 'Cliente Whatsapp desconectado'
-  }
+  // if(status === 'PENDENTE') {
+  //   return 'Cliente Whatsapp desconectado'
+  // }
 
   return (
+    <ChatProvider>
     <div className='absolute left-0 top-0 right-0 bottom-0 bg-gray-100'>
       <Sidebar />
       <div className='absolute right-0 top-0 bottom-0 left-80 flex-col flex'>
@@ -48,5 +50,6 @@ export function ChatScreen() {
         <ChatInput id={chat_id} />
       </div>
     </div>
+    </ChatProvider>
   );
 }
