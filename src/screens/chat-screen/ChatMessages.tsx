@@ -23,7 +23,6 @@ export function ChatMessages({ id }: any) {
   }, [id]);
 
   async function handlerNewMessage(message: any) {
-    console.log('message', message)
     if(!message.fromMe) {
       toast.info(`${message.chat.name} ${message.body}` , {theme: 'light'})
     }

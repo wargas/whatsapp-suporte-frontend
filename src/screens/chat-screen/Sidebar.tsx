@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import { ChatContext } from './ChatContext';
 
 export function Sidebar() {
-  const { loadSuportes, suportes, fila } = useContext(ChatContext)
+  const { loadSuportes, suportes, fila, suporte } = useContext(ChatContext)
 
   const { push } = useHistory()
   const { user } = useAuth()
@@ -81,16 +81,16 @@ export function Sidebar() {
       <div
         style={{ scrollbarWidth: 'thin' }}
         className='flex-1 overflow-y-auto'>
-        {suportes.map((suporte: any) => (
+        {suportes.map((item: any) => (
           <div
-            key={suporte.id}
-            onClick={() => push(`/chat/${suporte.id}`)}
-            className='p-2 py-3 text-sm flex items-center border-b border-gray-50 cursor-pointer hover:bg-gray-50'>
+            key={item.id}
+            onClick={() => push(`/chat/${item.id}`)}
+            className={`${item.id === suporte.id ? 'bg-gray-100' : ''} p-2 py-3 text-sm flex items-center border-b border-gray-50 cursor-pointer hover:bg-gray-50`}>
             <div>
-              {suporte.image_url ? (
+              {item.image_url ? (
                 <img
                   className='w-10 rounded-full'
-                  src={suporte.image_url}
+                  src={item.image_url}
                   alt=''
                 />
               ) : (
@@ -108,14 +108,16 @@ export function Sidebar() {
             </div>
             <div className='ml-3'>
               <span>
-                {suporte.pushname || suporte.name || suporte.contact_id}
+                {item.pushname || item.name || item.contact_id}
               </span>{' '}
               <br />
               <span className='text-xs text-gray-500'>
-                {suporte.setor || 'PADRAO'}
+                {item.setor || 'PADRAO'}
               </span>
             </div>
-            <div className='ml-auto text-xs bg-gray-100 rounded-full shadow-sm px-2'></div>
+            <div className='ml-auto text-xs bg-green-600 text-white rounded-full shadow-sm px-2'>
+              {item.unreadCount || ''}
+            </div>
           </div>
         ))}
       </div>

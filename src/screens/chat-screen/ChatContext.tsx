@@ -2,6 +2,7 @@ import axios from 'axios';
 import { createContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { Suporte } from '../../interfaces';
+import { useSocket } from '../../providers/socket';
 
 interface contextProps {
   suportes: Suporte[];
@@ -25,13 +26,22 @@ export function ChatProvider({ children }: any) {
 
   const { chat_id: id = null } = useParams<{ chat_id: string }>();
 
+  const { socket } = useSocket()
+
   useEffect(() => {
     loadSuportes();
+    socket?.on('message', handleMessage)
+
+    return () => { socket?.off('message', handleMessage) }
   }, []);
 
   useEffect(() => {
     loadSuporte();
   }, [id]);
+
+  function handleMessage() {
+    loadSuportes()
+  }
 
   async function loadSuportes() {
     try {
