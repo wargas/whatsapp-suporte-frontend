@@ -61,6 +61,8 @@ export function ChatProvider({ children }: any) {
       const { data } = await axios.get(`suportes/${id}`);
 
       setSuporte(data);
+
+      loadSuportes()
     } catch (error) {}
   }
 
