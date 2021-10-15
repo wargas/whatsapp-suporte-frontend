@@ -14,9 +14,11 @@ export function ChatMessages({ id }: any) {
 
   useEffect(() => {
     socket?.on('message', handlerNewMessage);
+    socket?.on('ack', handleAck)
 
     return () => {
       socket?.off('message', handlerNewMessage);
+      socket?.off('ack', handleAck)
     };
   }, [id]);
 
@@ -31,9 +33,20 @@ export function ChatMessages({ id }: any) {
 
   function scrollBottom() {
     if (containerRef) {
-      console.log(containerRef.scrollHeight, containerRef.scrollTop);
-      containerRef.scrollTop = containerRef.scrollHeight;
+            containerRef.scrollTop = containerRef.scrollHeight;
     }
+  }
+
+  function handleAck(message: Message) {
+    console.log('ack',message.id._serialized, message.ack)
+    setMessages(old => old.map(item => {
+
+      if(message.id._serialized === item.id._serialized) {
+        item.ack = message.ack
+      }
+
+      return item
+    }))
   }
 
   async function handlerNewMessage(message: any) {

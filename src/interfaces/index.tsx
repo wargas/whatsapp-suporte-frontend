@@ -47,6 +47,11 @@ export type Message = {
   isStarred: Boolean;
   fromMe: Boolean;
   hasQuotedMsg: Boolean;
+  location: {
+    latitude: number;
+    longitude: number;
+    description: string;
+  };
   vCards: any[];
   mentionedIds: any[];
   links: any[];

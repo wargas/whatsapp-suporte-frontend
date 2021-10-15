@@ -51,8 +51,6 @@ export function ChatProvider({ children }: any) {
 
       setSuportes(data.suportes);
       setFila(data.fila);
-
-      console.log(suportes);
     } catch (error) {}
   }
 
