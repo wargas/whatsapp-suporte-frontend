@@ -85,7 +85,7 @@ export function Sidebar() {
           <div
             key={item.id}
             onClick={() => push(`/chat/${item.id}`)}
-            className={`${item.id === suporte.id ? 'bg-gray-100' : ''} p-2 py-3 text-sm flex items-center border-b border-gray-50 cursor-pointer hover:bg-gray-50`}>
+            className={`${item.id === suporte.id ? 'bg-gray-50' : ''} p-2 py-3 text-sm flex items-center border-b border-gray-50 cursor-pointer hover:bg-gray-50`}>
             <div>
               {item.image_url ? (
                 <img

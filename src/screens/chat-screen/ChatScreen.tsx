@@ -10,12 +10,12 @@ import { ChatContext, ChatProvider } from './ChatContext';
 
 export function ChatScreen() {
   const { chat_id = null } = useParams<{ chat_id: string }>();
-  const [status, setStatus] = useState('PENDENTE')
+  const [status, setStatus] = useState('PENDENTE');
 
   const { socket } = useSocket();
   useEffect(() => {
     socket?.on('status', handlerStatusChange);
-    loadStatus()
+    loadStatus();
 
     return () => {
       socket?.off('status', handlerStatusChange);
@@ -23,33 +23,40 @@ export function ChatScreen() {
   }, [socket]);
 
   function handlerStatusChange(status: string) {
-    setStatus(status)
+    setStatus(status);
   }
 
   async function loadStatus() {
     try {
-      const { data } = await axios.get<{status: string}>('suportes/status');
+      const { data } = await axios.get<{ status: string }>('suportes/status');
 
-      setStatus(data.status)
-    } catch (error) {
-      
-    }
+      setStatus(data.status);
+    } catch (error) {}
   }
 
-  // if(status === 'PENDENTE') {
-  //   return 'Cliente Whatsapp desconectado'
-  // }
+  if (status === 'PENDENTE') {
+    return 'Cliente Whatsapp desconectado';
+  }
 
   return (
     <ChatProvider>
-    <div className='absolute left-0 top-0 right-0 bottom-0 bg-gray-100'>
-      <Sidebar />
-      <div className='absolute right-0 top-0 bottom-0 left-80 flex-col flex'>
-        <ChatHeader id={chat_id} />
-        <ChatMessages id={chat_id} />
-        <ChatInput id={chat_id} />
+      <div className='absolute left-0 top-0 right-0 bottom-0 bg-gray-100'>
+        <Sidebar />
+        <div className='absolute right-0 top-0 bottom-0 left-80 flex-col flex'>
+          {chat_id ? (
+            <>
+              <ChatHeader id={chat_id} />
+              <ChatMessages id={chat_id} />
+              <ChatInput id={chat_id} />
+            </>
+            ) : (
+            <div className="h-full flex flex-col justify-center items-center bg-gray-50">
+              <p className="text-gray-800 text-2xl font-light">Selecione um suporte</p> 
+              <p className="text-sm text-gray-400">Verifique se há novos suportes</p>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
     </ChatProvider>
   );
 }

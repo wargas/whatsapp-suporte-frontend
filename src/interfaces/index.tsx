@@ -19,6 +19,7 @@ export type Suporte = {
   chat_id: string;
   status: string;
   setor: string;
+  messages: Message[]
 };
 
 export type Message = {

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { createContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
-import { Suporte } from '../../interfaces';
+import { Message, Suporte } from '../../interfaces';
 import { useSocket } from '../../providers/socket';
 
 interface contextProps {
@@ -10,6 +10,7 @@ interface contextProps {
   suporte: Suporte;
   status: string;
   setSuportes: any;
+  setSuporte: any;
   setFila: any;
   setStatus: (status: string) => void;
   loadSuportes: () => void;
@@ -26,21 +27,28 @@ export function ChatProvider({ children }: any) {
 
   const { chat_id: id = null } = useParams<{ chat_id: string }>();
 
-  const { socket } = useSocket()
+  const { socket } = useSocket();
 
   useEffect(() => {
     loadSuportes();
-    socket?.on('message', handleMessage)
+    socket?.on('message', handleMessage);
+    socket?.on('ack', handleAck)
 
-    return () => { socket?.off('message', handleMessage) }
+    return () => {
+      socket?.off('message', handleMessage);
+      socket?.off('ack', handleAck)
+    };
   }, []);
 
   useEffect(() => {
-    loadSuporte();
+    if(id) {
+      loadSuporte();
+    }
   }, [id]);
 
   function handleMessage() {
-    loadSuportes()
+    loadSuporte();
+    loadSuportes();
   }
 
   async function loadSuportes() {
@@ -60,8 +68,25 @@ export function ChatProvider({ children }: any) {
 
       setSuporte(data);
 
-      loadSuportes()
+      loadSuportes();
     } catch (error) {}
+  }
+
+  function handleAck(message: Message) {
+    console.log('ack', message.id._serialized, message.ack);
+    setSuporte((_suporte: Suporte) => {
+
+      _suporte.messages = _suporte.messages.map(_message => {
+
+        if(message.id.id === _message.id.id) {
+          _message.ack = message.ack
+        }
+
+        return _message
+      })
+
+      return _suporte
+    });
   }
 
   return (
@@ -74,6 +99,7 @@ export function ChatProvider({ children }: any) {
         loadSuportes,
         loadSuporte,
         setSuportes,
+        setSuporte,
         fila,
         setFila,
       }}>
