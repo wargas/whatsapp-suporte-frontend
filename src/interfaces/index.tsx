@@ -11,7 +11,7 @@ export type AuthContextProps = {
 };
 
 export type Suporte = {
-  id: Number;
+  id: number;
   name: string;
   pushname: string;
   image_url: string;
@@ -22,7 +22,32 @@ export type Suporte = {
 };
 
 export type Message = {
-    body: string,
-    id: string,
-    fromMe: boolean
-}
+  mediaKey: String;
+  id: {
+    fromMe: Boolean;
+    remote: {
+      server: String;
+      user: String;
+      _serialized: String;
+    };
+    id: String;
+    _serialized: String;
+  };
+  ack: number;
+  hasMedia: Boolean;
+  body: String;
+  type: String;
+  timestamp: number;
+  from: String;
+  to: String;
+  deviceType: String;
+  isForwarded: Boolean;
+  forwardingScore: number;
+  isStatus: Boolean;
+  isStarred: Boolean;
+  fromMe: Boolean;
+  hasQuotedMsg: Boolean;
+  vCards: any[];
+  mentionedIds: any[];
+  links: any[];
+};

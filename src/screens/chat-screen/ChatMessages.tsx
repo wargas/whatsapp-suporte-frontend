@@ -1,6 +1,8 @@
 import axios from 'axios';
+import { DateTime } from 'luxon';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { MessageItem } from '../../components/MessageItem';
 import { Message } from '../../interfaces';
 import { useSocket } from '../../providers/socket';
 
@@ -48,7 +50,7 @@ export function ChatMessages({ id }: any) {
       setMessages(data);
     } catch (error) {}
 
-    scrollBottom()
+    scrollBottom();
   }
 
   return (
@@ -57,30 +59,21 @@ export function ChatMessages({ id }: any) {
       style={{ scrollbarWidth: 'thin', scrollbarColor: 'white' }}
       className='flex-1 overflow-y-scroll'>
       <div className='flex flex-col justify-end '>
-        {messages.map((message: any) => (
-          <div key={message.id._serialized} className='flex'>
-            <div
-              className={`p-3 text-sm max-w-sm ${
-                message.fromMe ? 'ml-auto bg-green-50' : 'mr-auto bg-white'
-              } mx-5 my-1 rounded-t-lg rounded-l-lg  shadow-sm`}>
-              {message.hasMedia && message.type === 'image' && (
-                <img
-                  className='rounded-lg cursor-pointer'
-                  src={`http://${process.env.REACT_APP_API}/api/v1/media/${message.id._serialized}`}
-                  alt=''
-                />
-              )}
-              {message.hasMedia && message.type === 'ptt' && (
-                <audio controls>
-                  <source
-                    src={`http://${process.env.REACT_APP_API}/api/v1/media/${message.id._serialized}`}
-                  />
-                </audio>
-              )}
-              {message.body}
-            </div>
-          </div>
-        ))}
+        {messages.map((message: any, index) => {
+          let changedDate = true
+          if(index > 0) {
+            const lastMsg = messages[index - 1];
+
+            const lastDate = DateTime.fromMillis(lastMsg.timestamp*1000).toSQLDate()
+            const currDate = DateTime.fromMillis(message.timestamp*1000).toSQLDate()
+
+            changedDate = lastDate !== currDate
+
+          }
+          const lastMessage = messages[index - 1]
+
+          return <MessageItem changedDate={changedDate} message={message} key={message.id._serialized} />;
+        })}
       </div>
     </div>
   );
