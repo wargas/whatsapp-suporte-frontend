@@ -82,9 +82,15 @@ export function MessageItem({ message, changedDate = true }: Props) {
           </audio>
         )}
         {message.type === 'chat' && (
-          <div>{message.body.split('\n').map((p, index) => (
-            <p key={index} dangerouslySetInnerHTML={{__html: p.replace(/\*([^\*]*)\*/g, "<b>$1</b>")}}></p>
-          ))}</div>
+          <div>
+            {message.body.split('\n').map((p, index) => (
+              <p
+                key={index}
+                dangerouslySetInnerHTML={{
+                  __html: p.replace(/\*([^\*]*)\*/g, '<b>$1</b>'),
+                }}></p>
+            ))}
+          </div>
         )}
         {message.type === 'document' && (
           <div className='flex items-center bg-gray-50 p-2'>
@@ -151,7 +157,7 @@ export function AckItem({ className = '', ack }: AckProps) {
         className={`text-gray-400 ${className}`}>
         <path
           fill='currentColor'
-          d='M10.91 3.316l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.879a.32.32 0 0 1-.484.033L1.891 7.769a.366.366 0 0 0-.515.006l-.423.433a.364.364 0 0 0 .006.514l3.258 3.185c.143.14.361.125.484-.033l6.272-8.048a.365.365 0 0 0-.063-.51z'></path>
+          d='M9.75 7.713H8.244V5.359a.5.5 0 0 0-.5-.5H7.65a.5.5 0 0 0-.5.5v2.947a.5.5 0 0 0 .5.5h.094l.003-.001.003.002h2a.5.5 0 0 0 .5-.5v-.094a.5.5 0 0 0-.5-.5zm0-5.263h-3.5c-1.82 0-3.3 1.48-3.3 3.3v3.5c0 1.82 1.48 3.3 3.3 3.3h3.5c1.82 0 3.3-1.48 3.3-3.3v-3.5c0-1.82-1.48-3.3-3.3-3.3zm2 6.8a2 2 0 0 1-2 2h-3.5a2 2 0 0 1-2-2v-3.5a2 2 0 0 1 2-2h3.5a2 2 0 0 1 2 2v3.5z'></path>
       </svg>
     );
   }
@@ -169,6 +175,7 @@ export function AckItem({ className = '', ack }: AckProps) {
       </svg>
     );
   }
+
 
   return (
     <svg
