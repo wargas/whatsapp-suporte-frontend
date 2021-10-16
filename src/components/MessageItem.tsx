@@ -82,8 +82,8 @@ export function MessageItem({ message, changedDate = true }: Props) {
           </audio>
         )}
         {message.type === 'chat' && (
-          <div>{message.body.split('\n').map(p => (
-            <p dangerouslySetInnerHTML={{__html: p.replace(/\*([^\*]*)\*/g, "<b>$1</b>")}}></p>
+          <div>{message.body.split('\n').map((p, index) => (
+            <p key={index} dangerouslySetInnerHTML={{__html: p.replace(/\*([^\*]*)\*/g, "<b>$1</b>")}}></p>
           ))}</div>
         )}
         {message.type === 'document' && (

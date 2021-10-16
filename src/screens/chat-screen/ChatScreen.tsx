@@ -16,7 +16,7 @@ export function ChatScreen() {
 
   const { socket } = useSocket();
   useEffect(() => {
-    loadStatus();
+    
     socket?.on('status', handlerStatusChange);
     socket?.on('qr', handlerQrCode);
     socket?.on('auth', handlerAuth);
@@ -26,9 +26,15 @@ export function ChatScreen() {
       socket?.off('qr', handlerQrCode);
       socket?.off('status', handlerStatusChange);
     };
-  }, [socket]);
+  }, [socket, status, qrcode]);
+
+  useEffect(() => {
+    
+    loadStatus();
+  }, [])
 
   async function handlerAuth() {
+    console.log('auth')
     loadStatus()
   }
 

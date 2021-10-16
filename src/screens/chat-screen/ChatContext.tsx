@@ -109,7 +109,7 @@ export function ChatProvider({ children }: any) {
 
   function handleAck(message: Message) {
     setSuporte((_suporte: Suporte) => {
-      _suporte.messages = _suporte.messages.map((_message) => {
+      _suporte.messages = _suporte?.messages.map((_message) => {
         if (message.id.id === _message.id.id) {
           _message.ack = message.ack;
         }
