@@ -2,7 +2,7 @@ import { Message } from '../interfaces';
 import { DateTime } from 'luxon';
 import { useState } from 'react';
 
-import { XIcon } from '@heroicons/react/solid';
+import { XIcon, DownloadIcon, DocumentTextIcon } from '@heroicons/react/solid';
 
 type Props = {
   message: Message;
@@ -82,6 +82,19 @@ export function MessageItem({ message, changedDate = true }: Props) {
           </audio>
         )}
         {message.type === 'chat' && <span>{message.body}</span>}
+        {message.type === 'document' && (
+          <div className="flex items-center bg-gray-50 p-2">
+            <div>
+              <DocumentTextIcon className="text-gray-500 w-6" />
+            </div>
+            <div className="text-gray-800">{message.body}</div>
+            <div className="ml-auto pl-3">
+              <a target="_blank" href={`http://${process.env.REACT_APP_API}/api/v1/media/${message.id._serialized}`} className="border p-2 rounded-full">
+                <DownloadIcon className="text-gray-600 w-4 h-4" />
+              </a>
+            </div>
+          </div>
+        )}
         {message.type === 'location' && (
           <a target="_blank" href={`https://www.google.com.br/maps/@${message.location.latitude},${message.location.longitude},15z`}>
             <img className="rounded" src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v11/static/${message.location.longitude},${message.location.latitude},10,0/400x200?access_token=pk.eyJ1Ijoid2FyZ2FzdGVpeGVpcmEiLCJhIjoiY2tqcGtvemR1MGZxNzJ0cDV0bHVma2wxYyJ9.rF2xlSh2R8iqTLRLUfwfrg`} alt="" />

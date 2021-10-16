@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { Message, Suporte } from '../../interfaces';
 import { useSocket } from '../../providers/socket';
@@ -38,7 +38,7 @@ export function ChatProvider({ children }: any) {
       socket?.off('message', handleMessage);
       socket?.off('ack', handleAck)
     };
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     if(id) {
@@ -62,7 +62,8 @@ export function ChatProvider({ children }: any) {
     } catch (error) {}
   }
 
-  async function loadSuporte() {
+  async function loadSuporte () {
+    
     try {
       const { data } = await axios.get(`suportes/${id}`);
 
@@ -73,7 +74,6 @@ export function ChatProvider({ children }: any) {
   }
 
   function handleAck(message: Message) {
-    console.log('ack', message.id._serialized, message.ack);
     setSuporte((_suporte: Suporte) => {
 
       _suporte.messages = _suporte.messages.map(_message => {
