@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { createContext, useCallback, useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { useHistory, useParams } from 'react-router';
+import { toast } from 'react-toastify';
 import { Message, Suporte } from '../../interfaces';
 import { useSocket } from '../../providers/socket';
 
@@ -11,6 +12,8 @@ interface contextProps {
   status: string;
   setSuportes: any;
   setSuporte: any;
+  loadingSuporte: boolean;
+  setLoadingSuporte: (value: boolean) => void;
   setFila: any;
   setStatus: (status: string) => void;
   loadSuportes: () => void;
@@ -20,36 +23,64 @@ interface contextProps {
 export const ChatContext = createContext<contextProps>({} as contextProps);
 
 export function ChatProvider({ children }: any) {
-  const [suportes, setSuportes] = useState([]);
+  const [suportes, setSuportes] = useState<Suporte[]>([]);
   const [fila, setFila] = useState(0);
   const [suporte, setSuporte] = useState<Suporte>({} as Suporte);
+  const [loadingSuporte, setLoadingSuporte] = useState(false);
   const [status, setStatus] = useState('');
 
   const { chat_id: id = null } = useParams<{ chat_id: string }>();
 
   const { socket } = useSocket();
+  const { push } = useHistory()
 
   useEffect(() => {
-    loadSuportes();
     socket?.on('message', handleMessage);
-    socket?.on('ack', handleAck)
+    socket?.on('ack', handleAck);
 
     return () => {
       socket?.off('message', handleMessage);
-      socket?.off('ack', handleAck)
+      socket?.off('ack', handleAck);
     };
-  }, [id]);
+  }, [suportes, fila, suporte, loadingSuporte, status]);
 
   useEffect(() => {
-    if(id) {
-      loadSuporte();
+    loadSuportes();
+    if (id) {
+      loadSuporte(true);
+    } else {
+      setSuporte({} as Suporte)
     }
   }, [id]);
 
-  function handleMessage() {
-    loadSuporte();
-    loadSuportes();
-  }
+  const handleMessage = useCallback(
+    function (msg: Message) {
+      if (msg.fromMe) {
+        loadSuporte();
+        loadSuportes();
+        return;
+      }
+
+      if (msg.from === suporte.chat_id) {
+        loadSuporte();
+      } else {
+        
+        const owner = suportes.find(
+          (item: Suporte) => item.chat_id === msg.from
+        );
+        
+        if(owner) {
+          toast.success(`Nova mensagem de ${owner.name || owner.pushname || owner.chat_id}`, {
+            onClick: () => push(`/chat/${owner.id}`),
+            theme: 'light',
+            autoClose: false
+          })    
+        }
+        loadSuportes()
+      }
+    },
+    [suporte.chat_id]
+  );
 
   async function loadSuportes() {
     try {
@@ -62,8 +93,10 @@ export function ChatProvider({ children }: any) {
     } catch (error) {}
   }
 
-  async function loadSuporte () {
-    
+  async function loadSuporte(withLoading = false) {
+    if (withLoading) {
+      setLoadingSuporte(true);
+    }
     try {
       const { data } = await axios.get(`suportes/${id}`);
 
@@ -71,21 +104,20 @@ export function ChatProvider({ children }: any) {
 
       loadSuportes();
     } catch (error) {}
+    setLoadingSuporte(false);
   }
 
   function handleAck(message: Message) {
     setSuporte((_suporte: Suporte) => {
-
-      _suporte.messages = _suporte.messages.map(_message => {
-
-        if(message.id.id === _message.id.id) {
-          _message.ack = message.ack
+      _suporte.messages = _suporte.messages.map((_message) => {
+        if (message.id.id === _message.id.id) {
+          _message.ack = message.ack;
         }
 
-        return _message
-      })
+        return _message;
+      });
 
-      return _suporte
+      return _suporte;
     });
   }
 
@@ -100,6 +132,8 @@ export function ChatProvider({ children }: any) {
         loadSuporte,
         setSuportes,
         setSuporte,
+        loadingSuporte,
+        setLoadingSuporte,
         fila,
         setFila,
       }}>

@@ -45,8 +45,8 @@ export function MessageItem({ message, changedDate = true }: Props) {
           {dateString}
         </div>
       )}
-      <div 
-      style={{minWidth: '150px'}}
+      <div
+        style={{ minWidth: '150px' }}
         className={`p-3 text-sm max-w-md ${
           message.fromMe ? 'ml-auto bg-green-50' : 'mr-auto bg-white'
         } mx-5 my-1 rounded-t-lg rounded-l-lg  shadow-sm`}>
@@ -81,29 +81,48 @@ export function MessageItem({ message, changedDate = true }: Props) {
             />
           </audio>
         )}
-        {message.type === 'chat' && <span>{message.body}</span>}
+        {message.type === 'chat' && (
+          <div>{message.body.split('\n').map(p => (
+            <p dangerouslySetInnerHTML={{__html: p.replace(/\*([^\*]*)\*/g, "<b>$1</b>")}}></p>
+          ))}</div>
+        )}
         {message.type === 'document' && (
-          <div className="flex items-center bg-gray-50 p-2">
+          <div className='flex items-center bg-gray-50 p-2'>
             <div>
-              <DocumentTextIcon className="text-gray-500 w-6" />
+              <DocumentTextIcon className='text-gray-500 w-6' />
             </div>
-            <div className="text-gray-800">{message.body}</div>
-            <div className="ml-auto pl-3">
-              <a target="_blank" href={`http://${process.env.REACT_APP_API}/api/v1/media/${message.id._serialized}`} className="border p-2 rounded-full">
-                <DownloadIcon className="text-gray-600 w-4 h-4" />
+            <div className='text-gray-800'>{message.body}</div>
+            <div className='ml-auto pl-3'>
+              <a
+                target='_blank'
+                href={`http://${process.env.REACT_APP_API}/api/v1/media/${message.id._serialized}`}
+                className='border p-2 rounded-full'>
+                <DownloadIcon className='text-gray-600 w-4 h-4' />
               </a>
             </div>
           </div>
         )}
         {message.type === 'location' && (
-          <a target="_blank" href={`https://www.google.com.br/maps/@${message.location.latitude},${message.location.longitude},15z`}>
-            <img className="rounded" src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v11/static/${message.location.longitude},${message.location.latitude},10,0/400x200?access_token=pk.eyJ1Ijoid2FyZ2FzdGVpeGVpcmEiLCJhIjoiY2tqcGtvemR1MGZxNzJ0cDV0bHVma2wxYyJ9.rF2xlSh2R8iqTLRLUfwfrg`} alt="" />
+          <a
+            target='_blank'
+            href={`https://www.google.com.br/maps/@${message.location.latitude},${message.location.longitude},15z`}>
+            <img
+              className='rounded'
+              src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v11/static/${message.location.longitude},${message.location.latitude},10,0/400x200?access_token=pk.eyJ1Ijoid2FyZ2FzdGVpeGVpcmEiLCJhIjoiY2tqcGtvemR1MGZxNzJ0cDV0bHVma2wxYyJ9.rF2xlSh2R8iqTLRLUfwfrg`}
+              alt=''
+            />
           </a>
         )}
         {message.type === 'vcard' && (
-          <div className="cursor-pointer">
-            <span className="text">{extractVcard(message.vCards[0]).number}</span> <br />
-            <span className="text-gray-400 text-sm">{extractVcard(message.vCards[0]).name}</span> <br />
+          <div className='cursor-pointer'>
+            <span className='text'>
+              {extractVcard(message.vCards[0]).number}
+            </span>{' '}
+            <br />
+            <span className='text-gray-400 text-sm'>
+              {extractVcard(message.vCards[0]).name}
+            </span>{' '}
+            <br />
           </div>
         )}
         <div className='flex items-center justify-end mt-1'>
@@ -165,13 +184,13 @@ export function AckItem({ className = '', ack }: AckProps) {
 }
 
 type vCard = {
-  name: string,
-  number: string,
-}
+  name: string;
+  number: string;
+};
 
 export function extractVcard(vcard: string): vCard {
   return {
     name: vcard.split(':')[4]?.split('TEL')[0] || '-',
-    number: vcard.split(':')[4].split('waid=')[1]
-  }
+    number: vcard.split(':')[4].split('waid=')[1],
+  };
 }

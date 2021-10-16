@@ -1,18 +1,27 @@
 import { PaperClipIcon } from '@heroicons/react/outline';
 import axios from 'axios';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 
 export function ChatInput({ id }: any) {
   const [inputRef, setInputRef] = useState<any>();
+  const [text, setText] = useState('')
+  const [lines, setLines] = useState(1)
+
+  useEffect(() => {
+    const length = text.split('\n').length
+    setLines(length > 3 ? 3 : length)
+  }, [text])
 
   async function sendMessage(ev: any) {
-    if (ev.key === 'Enter') {
+
+    if (ev.key === 'Enter' && !ev.shiftKey) {
+      ev.preventDefault()
       try {
         const { data } = await axios.post(`suportes/${id}/send`, {
-          message: ev.target.value,
+          message: text,
         });
 
-        ev.target.value = '';
+        setText('')
       } catch (error) {}
     }
   }
@@ -67,12 +76,14 @@ export function ChatInput({ id }: any) {
       <div className='p-3 cursor-pointer' onClick={handleClickFile}>
         <PaperClipIcon className='w-4' />
       </div>
-      <input
+      <textarea
+      style={{maxHeight: 45 * lines, resize: 'none'}}
         onPaste={handlerPasteImage}
         onKeyPress={sendMessage}
-        className='bg-gray-200 px-5 py-2 rounded-full flex-1'
+        value={text}
+        onChange={ev => setText(ev.target.value)}
+        className='bg-gray-200 overflow-y-hidden px-5 py-2 rounded-3xl flex-1'
         placeholder='Digite uma mensagem'
-        type='text'
       />
     </div>
   );
