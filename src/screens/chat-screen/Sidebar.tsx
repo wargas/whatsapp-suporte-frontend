@@ -6,24 +6,27 @@ import { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { ChatContext } from './ChatContext';
+import { DateTime } from 'luxon';
 
 export function Sidebar() {
-  const { loadSuportes, suportes, fila, suporte } = useContext(ChatContext)
+  const { loadSuportes, suportes, fila, suporte } = useContext(ChatContext);
 
-  const { push } = useHistory()
-  const { user } = useAuth()
+  const { push } = useHistory();
+  const { user } = useAuth();
 
   async function getNextSuport() {
     try {
       const { data } = await axios.get<any>('suportes/next');
-      if(!data.error) {
-        toast.success(`Você foi adicionado como responsável pelo suporte de ${data.name}`)
+      if (!data.error) {
+        toast.success(
+          `Você foi adicionado como responsável pelo suporte de ${data.name}`
+        );
       } else {
-        toast.warning(data.error)
+        toast.warning(data.error);
       }
-      loadSuportes()
+      loadSuportes();
     } catch (error) {
-      toast.error('Ocorreu um erro')
+      toast.error('Ocorreu um erro');
     }
   }
 
@@ -85,7 +88,9 @@ export function Sidebar() {
           <div
             key={item.id}
             onClick={() => push(`/chat/${item.id}`)}
-            className={`${item.id === suporte.id ? 'bg-gray-50' : ''} p-2 py-3 text-sm flex items-center border-b border-gray-50 cursor-pointer hover:bg-gray-50`}>
+            className={`${
+              item.id === suporte.id ? 'bg-gray-50' : ''
+            } p-2 py-3 text-sm flex border-b border-gray-50 cursor-pointer hover:bg-gray-50`}>
             <div>
               {item.image_url ? (
                 <img
@@ -107,16 +112,21 @@ export function Sidebar() {
               )}
             </div>
             <div className='ml-3'>
-              <span>
-                {item.pushname || item.name || item.contact_id}
-              </span>{' '}
+              <span>{item.pushname || item.name || item.contact_id}</span>{' '}
               <br />
               <span className='text-xs text-gray-500'>
                 {item.setor || 'PADRAO'}
               </span>
             </div>
-            <div className='ml-auto text-xs bg-green-600 text-white rounded-full shadow-sm px-2'>
-              {item.unreadCount || ''}
+            <div className='ml-auto flex flex-col'>
+              <div className="text-xs text-gray-400">
+                {DateTime.fromMillis(item.timestamp*1000).toFormat('HH:mm')}
+              </div>
+              <div className='flex'>
+                <span className="text-xs ml-auto bg-green-600 text-white rounded-full shadow-sm px-2">
+                  {item.unreadCount || ''}
+                </span>
+              </div>
             </div>
           </div>
         ))}

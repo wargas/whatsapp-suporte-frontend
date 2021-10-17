@@ -51,7 +51,7 @@ export function ChatInput({ id }: any) {
           'Content-Type': 'multipart/form-data',
         },
       });
-      console.log('data', data);
+     
     } catch (error) {}
   }
 

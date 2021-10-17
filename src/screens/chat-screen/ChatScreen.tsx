@@ -34,7 +34,6 @@ export function ChatScreen() {
   }, [])
 
   async function handlerAuth() {
-    console.log('auth')
     loadStatus()
   }
 
