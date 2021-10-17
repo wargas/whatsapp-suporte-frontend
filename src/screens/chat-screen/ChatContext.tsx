@@ -32,7 +32,7 @@ export function ChatProvider({ children }: any) {
   const { chat_id: id = null } = useParams<{ chat_id: string }>();
 
   const { socket } = useSocket();
-  const { push } = useHistory()
+  const { push } = useHistory();
 
   useEffect(() => {
     socket?.on('message', handleMessage);
@@ -49,7 +49,7 @@ export function ChatProvider({ children }: any) {
     if (id) {
       loadSuporte(true);
     } else {
-      setSuporte({} as Suporte)
+      setSuporte({} as Suporte);
     }
   }, [id]);
 
@@ -64,19 +64,21 @@ export function ChatProvider({ children }: any) {
       if (msg.from === suporte.chat_id) {
         loadSuporte();
       } else {
-        
         const owner = suportes.find(
           (item: Suporte) => item.chat_id === msg.from
         );
-        
-        if(owner) {
-          toast.success(`Nova mensagem de ${owner.name || owner.pushname || owner.chat_id}`, {
-            onClick: () => push(`/chat/${owner.id}`),
-            theme: 'light',
-            autoClose: false
-          })    
+
+        if (owner) {
+          toast.success(
+            `Nova mensagem de ${owner.name || owner.pushname || owner.chat_id}`,
+            {
+              onClick: () => push(`/chat/${owner.id}`),
+              theme: 'light',
+              autoClose: false,
+            }
+          );
         }
-        loadSuportes()
+        loadSuportes();
       }
     },
     [suporte.chat_id]
@@ -108,16 +110,16 @@ export function ChatProvider({ children }: any) {
   }
 
   function handleAck(message: Message) {
-    
-    const newMessages = suporte.messages.map((_message) => {
-      if (message.id.id === _message.id.id) {
-        _message.ack = message.ack;
-      }
-      return _message;
-    });
+    if (suporte?.messages) {
+      const newMessages = suporte.messages.map((_message) => {
+        if (message.id.id === _message.id.id) {
+          _message.ack = message.ack;
+        }
+        return _message;
+      });
+      setSuporte((old) => ({ ...old, messages: newMessages }));
+    }
 
-
-    setSuporte(old => ({...old, messages: newMessages}));
   }
 
   return (

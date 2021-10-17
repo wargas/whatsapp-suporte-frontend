@@ -4,27 +4,25 @@ import { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { toast } from 'react-toastify';
 import { ChatContext } from './ChatContext';
+import { FinalizarSuporte } from './FinalizarSuporte';
+import { useOffCanvas } from './OffCanvas';
 
 export function ChatHeader({ id }: any) {
  
 
   const {push} = useHistory()
+  const { open } = useOffCanvas()
+
+  // offCanvas.open(Teste)
   const { loadSuportes, suporte, status, setStatus } = useContext(ChatContext)
 
   
 
   async function finalizarChamado() {
-    setStatus('FINALIZANDO')
-    try {
-      const { data } = await axios.post(`suportes/${id}/finalizar`, {})
-      toast.success('Suporte finalizado')
-      push('/chat')
 
-      loadSuportes()
-    } catch (error) {
-      toast.error('Ocorreu um erro')
-    }
-    setStatus('')
+    open(FinalizarSuporte, (ev: any) => {
+      console.log('fechou', ev)
+    })
   }
 
   if (!suporte.id) {
@@ -62,3 +60,4 @@ export function ChatHeader({ id }: any) {
     </div>
   );
 }
+

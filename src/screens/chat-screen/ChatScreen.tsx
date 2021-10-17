@@ -8,6 +8,7 @@ import { useSocket } from '../../providers/socket';
 import axios from 'axios';
 import qrcodeSvg from 'qrcode-svg';
 import { ChatContext, ChatProvider } from './ChatContext';
+import { OffCanvas } from './OffCanvas';
 
 export function ChatScreen() {
   const { chat_id = null } = useParams<{ chat_id: string }>();
@@ -16,7 +17,6 @@ export function ChatScreen() {
 
   const { socket } = useSocket();
   useEffect(() => {
-    
     socket?.on('status', handlerStatusChange);
     socket?.on('qr', handlerQrCode);
     socket?.on('auth', handlerAuth);
@@ -29,12 +29,11 @@ export function ChatScreen() {
   }, [socket, status, qrcode]);
 
   useEffect(() => {
-    
     loadStatus();
-  }, [])
+  }, []);
 
   async function handlerAuth() {
-    loadStatus()
+    loadStatus();
   }
 
   async function handlerQrCode(qr: string) {
@@ -88,28 +87,30 @@ export function ChatScreen() {
   }
 
   return (
-    <ChatProvider>
-      <div className='absolute left-0 top-0 right-0 bottom-0 bg-gray-100'>
-        <Sidebar />
-        <div className='absolute right-0 top-0 bottom-0 left-80 flex-col flex'>
-          {chat_id ? (
-            <>
-              <ChatHeader id={chat_id} />
-              <ChatMessages id={chat_id} />
-              <ChatInput id={chat_id} />
-            </>
-          ) : (
-            <div className='h-full flex flex-col justify-center items-center bg-gray-50'>
-              <p className='text-gray-800 text-2xl font-light'>
-                Selecione um suporte
-              </p>
-              <p className='text-sm text-gray-400'>
-                Verifique se há novos suportes
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
-    </ChatProvider>
+    <div className='absolute overflow-hidden left-0 top-0 right-0 bottom-0 bg-gray-100'>
+      <ChatProvider>
+        <OffCanvas>
+          <Sidebar />
+          <div className='absolute right-0 top-0 bottom-0 left-80 flex-col flex'>
+            {chat_id ? (
+              <>
+                <ChatHeader id={chat_id} />
+                <ChatMessages id={chat_id} />
+                <ChatInput id={chat_id} />
+              </>
+            ) : (
+              <div className='h-full flex flex-col justify-center items-center bg-gray-50'>
+                <p className='text-gray-800 text-2xl font-light'>
+                  Selecione um suporte
+                </p>
+                <p className='text-sm text-gray-400'>
+                  Verifique se há novos suportes
+                </p>
+              </div>
+            )}
+          </div>
+        </OffCanvas>
+      </ChatProvider>
+    </div>
   );
 }
