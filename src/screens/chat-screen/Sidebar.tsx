@@ -1,5 +1,9 @@
-import { DotsVerticalIcon, PaperClipIcon } from '@heroicons/react/outline';
-import { Popover } from '@headlessui/react';
+import {
+  ChatAlt2Icon,
+  DotsVerticalIcon,
+  PaperClipIcon,
+} from '@heroicons/react/outline';
+import { Popover, Menu } from '@headlessui/react';
 import { useHistory } from 'react-router-dom';
 import { useAuth } from '../../providers/auth';
 import { useContext, useEffect, useState } from 'react';
@@ -7,12 +11,15 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { ChatContext } from './ChatContext';
 import { DateTime } from 'luxon';
+import { useOffCanvas } from './OffCanvas';
+import { ListContatos } from './ListContatos';
 
 export function Sidebar() {
   const { loadSuportes, suportes, fila, suporte } = useContext(ChatContext);
 
   const { push } = useHistory();
   const { user } = useAuth();
+  const { open } = useOffCanvas()
 
   async function getNextSuport() {
     try {
@@ -29,6 +36,8 @@ export function Sidebar() {
       toast.error('Ocorreu um erro');
     }
   }
+
+  
 
   return (
     <div className='absolute w-80 left-0 top-0 bottom-0 flex flex-col bg-white shadow-sm'>
@@ -50,28 +59,41 @@ export function Sidebar() {
           <span className='text-xs text-gray-400'>{user?.email}</span>
         </div>
         <div className='ml-auto'>
-          <Popover>
-            <Popover.Button className='p-3 transition-all hover:bg-gray-100 rounded-full'>
+          <button 
+            onClick={() => open(ListContatos)}
+            className="p-3 transition-all hover:bg-gray-100 rounded-full"> 
+            <ChatAlt2Icon className='w-5 text-gray-900' />
+          </button>
+        </div>
+        <div className='ml-0'>
+          <Menu>
+            <Menu.Button className='p-3 transition-all hover:bg-gray-100 rounded-full'>
               <DotsVerticalIcon className='w-5' />
-            </Popover.Button>
-            <Popover.Panel className='absolute z-10'>
+            </Menu.Button>
+            <Menu.Items className='absolute z-10'>
               <div className='bg-white shadow w-44 rounded'>
-                <div
-                  onClick={() => push('/login')}
-                  className='cursor-pointer border-b border-gray-50 text-sm text-gray-600 px-5 p-3 hover:bg-gray-50 transition-all'>
-                  Desconectar
-                </div>
-                <div className='cursor-pointer text-sm text-gray-600 px-5 p-3 hover:bg-gray-50 transition-all'>
-                  Perfil
-                </div>
-                <div
-                  onClick={loadSuportes}
-                  className='cursor-pointer text-sm text-gray-600 px-5 p-3 hover:bg-gray-50 transition-all'>
-                  Atualizar
-                </div>
+                <Menu.Item>
+                  <div
+                    onClick={() => push('/login')}
+                    className='cursor-pointer border-b border-gray-50 text-sm text-gray-600 px-5 p-3 hover:bg-gray-50 transition-all'>
+                    Desconectar
+                  </div>
+                </Menu.Item>
+                <Menu.Item>
+                  <div className='cursor-pointer text-sm text-gray-600 px-5 p-3 hover:bg-gray-50 transition-all'>
+                    Perfil
+                  </div>
+                </Menu.Item>
+                <Menu.Item>
+                  <div
+                    onClick={loadSuportes}
+                    className='cursor-pointer text-sm text-gray-600 px-5 p-3 hover:bg-gray-50 transition-all'>
+                    Atualizar
+                  </div>
+                </Menu.Item>
               </div>
-            </Popover.Panel>
-          </Popover>
+            </Menu.Items>
+          </Menu>
         </div>
       </div>
       <div className='flex w-full p-3 border-b'>
@@ -119,11 +141,11 @@ export function Sidebar() {
               </span>
             </div>
             <div className='ml-auto flex flex-col'>
-              <div className="text-xs text-gray-400">
-                {DateTime.fromMillis(item.timestamp*1000).toFormat('HH:mm')}
+              <div className='text-xs text-gray-400'>
+                {DateTime.fromMillis(item.timestamp * 1000).toFormat('HH:mm')}
               </div>
               <div className='flex'>
-                <span className="text-xs ml-auto bg-green-600 text-white rounded-full shadow-sm px-2">
+                <span className='text-xs ml-auto bg-green-600 text-white rounded-full shadow-sm px-2'>
                   {item.unreadCount || ''}
                 </span>
               </div>

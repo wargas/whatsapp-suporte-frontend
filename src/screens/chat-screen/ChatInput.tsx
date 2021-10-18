@@ -1,9 +1,11 @@
 import { PaperClipIcon } from '@heroicons/react/outline';
 import axios from 'axios';
 import { ChangeEvent, useEffect, useState } from 'react';
+import { Loading } from '../../components/Loading';
 
 export function ChatInput({ id }: any) {
   const [inputRef, setInputRef] = useState<any>();
+  const [status, setStatus] = useState('')
   const [text, setText] = useState('')
   const [lines, setLines] = useState(1)
 
@@ -13,7 +15,7 @@ export function ChatInput({ id }: any) {
   }, [text])
 
   async function sendMessage(ev: any) {
-
+    setStatus('loading')
     if (ev.key === 'Enter' && !ev.shiftKey) {
       ev.preventDefault()
       try {
@@ -24,6 +26,7 @@ export function ChatInput({ id }: any) {
         setText('')
       } catch (error) {}
     }
+    setStatus('')
   }
 
   async function handleClickFile() {
@@ -85,6 +88,9 @@ export function ChatInput({ id }: any) {
         className='bg-gray-200 overflow-y-hidden px-5 py-2 rounded-3xl flex-1'
         placeholder='Digite uma mensagem'
       />
+      {status === 'loading' && (
+        <div className="ml-3 loading w-6 h-6 border-green-500"></div>
+      )}
     </div>
   );
 }

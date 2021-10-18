@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.loading {
+    @apply border-2 animate-spin rounded-full;
+    border-left-color: transparent;
+}

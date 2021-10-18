@@ -22,6 +22,18 @@ export type Suporte = {
   messages: Message[]
 };
 
+export type Contato = {
+  id: {
+    id: string,
+    _serialized: string
+  },
+  name: string;
+  pushname: string;
+  shortname: string;
+  number: string;
+  isGroup: boolean
+}
+
 export type Message = {
   mediaKey: String;
   id: {

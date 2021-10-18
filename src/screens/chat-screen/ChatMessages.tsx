@@ -26,7 +26,7 @@ export function ChatMessages({ id }: any) {
       <div className='flex min-h-screen flex-col justify-end'>
         {loadingSuporte && (
           <div className="h-screen flex items-center justify-center">
-            <div className='animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900'></div>
+            <div className='h-6 w-6 border-green-500 loading'></div>
           </div>
         )}
         {suporte?.messages &&
