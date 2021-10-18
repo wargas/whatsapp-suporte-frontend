@@ -23,8 +23,6 @@ type Props = {
 </svg>;
 
 export function MessageItem({ message, changedDate = true }: Props) {
-  const [full, setFull] = useState(false);
-
   const currentDate = DateTime.fromMillis(message.timestamp * 1000).toFormat(
     'dd/MM/yyyy'
   );
@@ -51,28 +49,7 @@ export function MessageItem({ message, changedDate = true }: Props) {
           message.fromMe ? 'ml-auto bg-green-50' : 'mr-auto bg-white'
         } mx-5 my-1 rounded-t-lg rounded-l-lg  shadow-sm`}>
         {message.hasMedia && message.type === 'image' && (
-          <div
-            style={{ backgroundColor: full ? '#000000ee' : 'transparent' }}
-            className={`${
-              full &&
-              'z-100 pt-16 pb-3 fixed flex items-center justify-center overflow-y-scroll left-0 top-0 bottom-0 right-0'
-            }`}>
-            {full && (
-              <div
-                style={{ backgroundColor: '#000000dd' }}
-                className='absolute flex top-0 h-14 bg-white left-0 right-0'>
-                <button onClick={() => setFull(false)} className='ml-auto px-3'>
-                  <XIcon className='text-gray-400 w-5' />
-                </button>
-              </div>
-            )}
-            <img
-              onClick={() => setFull(true)}
-              className={`${!full && 'rounded-lg'} max-h-full cursor-pointer`}
-              src={`http://${process.env.REACT_APP_API}/api/v1/media/${message.id._serialized}`}
-              alt=''
-            />
-          </div>
+          <MessageImage message={message} />
         )}
         {message.hasMedia && message.type === 'ptt' && (
           <audio controls>
@@ -176,7 +153,6 @@ export function AckItem({ className = '', ack }: AckProps) {
     );
   }
 
-
   return (
     <svg
       viewBox='0 0 16 15'
@@ -187,6 +163,41 @@ export function AckItem({ className = '', ack }: AckProps) {
         fill='currentColor'
         d='M15.01 3.316l-.478-.372a.365.365 0 0 0-.51.063L8.666 9.879a.32.32 0 0 1-.484.033l-.358-.325a.319.319 0 0 0-.484.032l-.378.483a.418.418 0 0 0 .036.541l1.32 1.266c.143.14.361.125.484-.033l6.272-8.048a.366.366 0 0 0-.064-.512zm-4.1 0l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.879a.32.32 0 0 1-.484.033L1.891 7.769a.366.366 0 0 0-.515.006l-.423.433a.364.364 0 0 0 .006.514l3.258 3.185c.143.14.361.125.484-.033l6.272-8.048a.365.365 0 0 0-.063-.51z'></path>
     </svg>
+  );
+}
+
+export function MessageImage({ message }: { message: Message }) {
+  const [full, setFull] = useState(false);
+  const [loading, setLoading] = useState(true);
+  return (
+    <div
+      style={{ backgroundColor: full ? '#000000ee' : 'transparent' }}
+      className={`${
+        full &&
+        'z-100 pt-16 pb-3 fixed flex items-center justify-center overflow-y-scroll left-0 top-0 bottom-0 right-0'
+      }`}>
+      {full && (
+        <div
+          style={{ backgroundColor: '#000000dd' }}
+          className='absolute flex top-0 h-14 bg-white left-0 right-0'>
+          <button onClick={() => setFull(false)} className='ml-auto px-3'>
+            <XIcon className='text-gray-400 w-5' />
+          </button>
+        </div>
+      )}
+      {loading && (
+        <div className="p-12">
+          <div className='loading w-6 h-6 border-green-600'></div>
+        </div>
+      )}
+      <img
+        onLoad={() => setLoading(false)}
+        onClick={() => setFull(true)}
+        className={`${!full && 'rounded-lg'} ${loading && 'hidden'} max-h-full cursor-pointer`}
+        src={`http://${process.env.REACT_APP_API}/api/v1/media/${message.id._serialized}`}
+        alt=''
+      />
+    </div>
   );
 }
 

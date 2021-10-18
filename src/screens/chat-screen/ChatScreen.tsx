@@ -79,7 +79,7 @@ export function ChatScreen() {
         <p className='text-gray-400'>Leia o QR code</p>
         {!qrcode && (
           <div className='absolute'>
-            <div className='animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900'></div>
+            <div className='loading h-6 w-6 border-b-2 border-green-600'></div>
           </div>
         )}
       </div>
