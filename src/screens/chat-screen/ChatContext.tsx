@@ -37,10 +37,12 @@ export function ChatProvider({ children }: any) {
   useEffect(() => {
     socket?.on('message', handleMessage);
     socket?.on('ack', handleAck);
+    socket?.on('count_fila', handleFila);
 
     return () => {
       socket?.off('message', handleMessage);
       socket?.off('ack', handleAck);
+      socket?.off('count_fila', handleFila);
     };
   }, [suportes, fila, suporte, loadingSuporte, status]);
 
@@ -87,6 +89,11 @@ export function ChatProvider({ children }: any) {
     [suporte.chat_id]
   );
 
+  async function handleFila(count: string) {
+    console.log(parseInt(count))
+    setFila(parseInt(count))
+  }
+
   async function loadSuportes() {
     try {
       const { data } = await axios.get<{ suportes: any; fila: number }>(
@@ -99,6 +106,9 @@ export function ChatProvider({ children }: any) {
   }
 
   async function loadSuporte(withLoading = false) {
+    if(!id) {
+      return;
+    }
     if (withLoading) {
       setLoadingSuporte(true);
     }
