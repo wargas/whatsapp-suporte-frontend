@@ -142,11 +142,11 @@ export function Sidebar() {
             </div>
             <div className='ml-auto flex flex-col'>
               <div className='text-xs text-gray-400'>
-                {DateTime.fromMillis(item.timestamp * 1000).toFormat('HH:mm')}
+                {/* {DateTime.fromMillis(item.timestamp * 1000).toFormat('HH:mm')} */}
               </div>
               <div className='flex'>
                 <span className='text-xs ml-auto bg-green-600 text-white rounded-full shadow-sm px-2'>
-                  {item.unreadCount || ''}
+                  {/* {item.unreadCount || ''} */}
                 </span>
               </div>
             </div>
