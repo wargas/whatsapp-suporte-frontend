@@ -45,7 +45,10 @@ export function ChatProvider({ children }: any) {
   }, [suportes, fila, suporte, loadingSuporte, status]);
 
   useEffect(() => {
-    loadSuportes();
+    loadSuportes()
+  }, []) 
+
+  useEffect(() => {
     if (id) {
       loadSuporte(true);
     } else {
@@ -104,7 +107,7 @@ export function ChatProvider({ children }: any) {
 
       setSuporte(data);
 
-      loadSuportes();
+      // loadSuportes();
     } catch (error) {}
     setLoadingSuporte(false);
   }
