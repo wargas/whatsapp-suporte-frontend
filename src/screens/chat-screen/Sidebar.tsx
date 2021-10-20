@@ -1,18 +1,18 @@
 import {
   ChatAlt2Icon,
   DotsVerticalIcon,
-  PaperClipIcon,
 } from '@heroicons/react/outline';
-import { Popover, Menu } from '@headlessui/react';
+import { Menu } from '@headlessui/react';
 import { useHistory } from 'react-router-dom';
 import { useAuth } from '../../providers/auth';
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { ChatContext } from './ChatContext';
-import { DateTime } from 'luxon';
 import { useOffCanvas } from './OffCanvas';
 import { ListContatos } from './ListContatos';
+import { DateTime } from 'luxon';
+import { Suporte } from '../../interfaces';
 
 export function Sidebar() {
   const { loadSuportes, suportes, fila, suporte } = useContext(ChatContext);
@@ -106,7 +106,7 @@ export function Sidebar() {
       <div
         style={{ scrollbarWidth: 'thin' }}
         className='flex-1 overflow-y-auto'>
-        {suportes.map((item: any) => (
+        {suportes.map((item: Suporte) => (
           <div
             key={item.id}
             onClick={() => push(`/chat/${item.id}`)}
@@ -137,16 +137,16 @@ export function Sidebar() {
               <span>{item.pushname || item.name || item.contact_id}</span>{' '}
               <br />
               <span className='text-xs text-gray-500'>
-                {item.setor || 'PADRAO'}
+                {item.status}
               </span>
             </div>
             <div className='ml-auto flex flex-col'>
               <div className='text-xs text-gray-400'>
-                {/* {DateTime.fromMillis(item.timestamp * 1000).toFormat('HH:mm')} */}
+                {formatData(DateTime.fromISO(item.updated_at))}
               </div>
               <div className='flex'>
                 <span className='text-xs ml-auto bg-green-600 text-white rounded-full shadow-sm px-2'>
-                  {/* {item.unreadCount || ''} */}
+                  {item.unreads || ''}
                 </span>
               </div>
             </div>
@@ -164,4 +164,17 @@ export function Sidebar() {
       </div>
     </div>
   );
+}
+
+function formatData(date: DateTime) {
+  const hoje = DateTime.local()
+  if(date.toSQLDate() === hoje.toSQLDate()) {
+    return date.toFormat('HH:mm')
+  }
+
+  if(date.toSQLDate() === hoje.minus({days: 1}).toISODate()) {
+    return 'ontem'
+  }
+
+  return date.toFormat('dd/MM')
 }

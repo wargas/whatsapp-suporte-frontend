@@ -38,11 +38,13 @@ export function ChatProvider({ children }: any) {
     socket?.on('message', handleMessage);
     socket?.on('ack', handleAck);
     socket?.on('count_fila', handleFila);
+    socket?.on('update-suporte', handleUpdateSuporte);
 
     return () => {
       socket?.off('message', handleMessage);
       socket?.off('ack', handleAck);
       socket?.off('count_fila', handleFila);
+      socket?.off('update-suporte', handleUpdateSuporte);
     };
   }, [suportes, fila, suporte, loadingSuporte, status]);
 
@@ -120,6 +122,18 @@ export function ChatProvider({ children }: any) {
       // loadSuportes();
     } catch (error) {}
     setLoadingSuporte(false);
+  }
+
+  async function handleUpdateSuporte(item: Suporte) {
+    console.log('update suporte', item)
+    setSuportes(items => items.map(_suporte => {
+
+      if(_suporte.id === item.id) {
+        _suporte.unreads = item.unreads
+      }
+
+      return _suporte
+    }))
   }
 
   function handleAck(message: Message) {

@@ -20,6 +20,8 @@ export type Suporte = {
   status: string;
   setor: string;
   messages: Message[]
+  unreads: Number;
+  updated_at: string;
 };
 
 export type Contato = {
