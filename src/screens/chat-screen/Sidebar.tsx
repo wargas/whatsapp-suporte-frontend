@@ -40,7 +40,7 @@ export function Sidebar() {
   
 
   return (
-    <div className='absolute w-80 left-0 top-0 bottom-0 flex flex-col bg-white shadow-sm'>
+    <div className='absolute w-80 left-0 top-0 bottom-0 flex flex-col bg-white shadow-lg'>
       <div className='shadow-sm h-16 items-center flex px-3'>
         <div>
           <svg viewBox='0 0 212 212' width='40' height='40' className=''>
@@ -98,7 +98,7 @@ export function Sidebar() {
       </div>
       <div className='flex w-full p-3 border-b'>
         <input
-          className='bg-gray-100 text-sm rounded-full py-2 px-5 flex-1'
+          className='bg-gray-100 text-sm rounded-full py-2 px-5 flex-1 focus:outline-none'
           type='text'
           placeholder='Pesquisa conversa'
         />
