@@ -1,8 +1,22 @@
 import { Message } from '../interfaces';
 import { DateTime } from 'luxon';
-import { useState } from 'react';
+import {
+  LegacyRef,
+  MutableRefObject,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
-import { XIcon, DownloadIcon, DocumentTextIcon } from '@heroicons/react/solid';
+import {
+  XIcon,
+  DownloadIcon,
+  DocumentTextIcon,
+  PlayIcon,
+  PauseIcon,
+} from '@heroicons/react/solid';
+import { ChatContext } from '../screens/chat-screen/ChatContext';
 
 type Props = {
   message: Message;
@@ -52,11 +66,7 @@ export function MessageItem({ message, changedDate = true }: Props) {
           <MessageImage message={message} />
         )}
         {message.hasMedia && message.type === 'ptt' && (
-          <audio controls>
-            <source
-              src={`http://${process.env.REACT_APP_API}/api/v1/media/${message.id._serialized}`}
-            />
-          </audio>
+          <MessageAudio message={message} />
         )}
         {message.type === 'chat' && (
           <div>
@@ -166,9 +176,139 @@ export function AckItem({ className = '', ack }: AckProps) {
   );
 }
 
+export function MessageAudio({ message }: { message: Message }) {
+  const [paused, setPaused] = useState(false);
+  const [position, setPosition] = useState(0);
+  const [canPlay, setCanPlay] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  const { audioVelocidade, setAudioVelocidade } = useContext(ChatContext)
+
+  useEffect(() => {
+    if(audioRef.current) {
+      audioRef.current.playbackRate = audioVelocidade
+    }
+  }, [audioVelocidade])
+  
+  function handlerPlay() {
+    if (audioRef.current) {
+      if (audioRef.current.paused) {
+        audioRef.current.play();
+        setPaused(false);
+      } else {
+        audioRef.current.pause();
+        setPaused(true);
+      }
+    }
+  }
+
+  function handlerTimeUpdate() {
+    if (audioRef.current) {
+      const { currentTime = 0, duration = 0 } = audioRef.current;
+      setPosition(currentTime / duration);
+    }
+  } 
+
+  function handleCanPlay(ev: any) {
+    setCanPlay(true)
+  }
+
+  function handlerSetVelocidade() {
+    switch(audioVelocidade) {
+      case 1: 
+        setAudioVelocidade(1.5)
+        break;
+      case 1.5:
+        setAudioVelocidade(2)
+        break;
+      default:
+        setAudioVelocidade(1)
+        break
+    }
+  }
+
+  return (
+    <div>
+      <div className='flex items-center w-60'>
+        <button onClick={handlerPlay}>
+          {(!audioRef.current?.paused && canPlay) && <PauseIcon className='w-9 text-gray-300' />}
+          {(audioRef.current?.paused || !canPlay) && <PlayIcon className='w-9 text-gray-300' />}
+        </button>
+        <div className='flex-1 ml-2'>
+          <div className='h-1 bg-gray-300 relative rounded-full'>
+            <div 
+              style={{
+                top: -4,
+                left: `${position * 95}%`,
+              }}
+              className={`bg-${canPlay ? 'blue' : 'gray'}-400 w-3 h-3 transition-all absolute   rounded-full`}></div>
+          </div>
+        </div>
+        <div className={`ml-3 ${!canPlay && 'hidden'}`}>
+          <button 
+            onClick={handlerSetVelocidade}
+            className="text-xs w-10 flex justify-center items-center bg-gray-400 text-white px-3 rounded-full shadow-xs">
+            {audioVelocidade}x
+          </button>
+        </div>
+      </div>
+      <audio
+        onCanPlay={handleCanPlay}
+        ref={audioRef}
+        onTimeUpdate={handlerTimeUpdate}
+        controls={false}
+        preload='none'>
+        <source
+          src={`http://${process.env.REACT_APP_API}/api/v1/media/${message.id._serialized}`}
+        />
+      </audio>
+    </div>
+  );
+}
+
 export function MessageImage({ message }: { message: Message }) {
   const [full, setFull] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [src, setSrc] = useState('');
+
+  const imageRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    if (imageRef.current) {
+      const observer = new IntersectionObserver(
+        (entries, observer) => {
+          entries.forEach((entry) => {
+            if (entry.intersectionRatio > 0) {
+              setSrc(
+                `http://${process.env.REACT_APP_API}/api/v1/media/${message.id._serialized}`
+              );
+            }
+          });
+        },
+        {
+          threshold: [1, 0.1],
+        }
+      );
+
+      observer.observe(imageRef.current);
+
+      return () => {
+        observer.disconnect();
+      };
+    }
+  }, [imageRef]);
+
+  function handlerLoadImage() {
+    setLoading(false);
+  }
+
+  function handlerError() {
+    if (src !== '') {
+      setError(true);
+    }
+  }
+
   return (
     <div
       style={{ backgroundColor: full ? '#000000ee' : 'transparent' }}
@@ -186,15 +326,24 @@ export function MessageImage({ message }: { message: Message }) {
         </div>
       )}
       {loading && (
-        <div className="p-12">
+        <div className='p-12'>
           <div className='loading w-6 h-6 border-green-600'></div>
         </div>
       )}
+      {error && src !== '' && (
+        <div className='p-12'>
+          <div>ERROR</div>
+        </div>
+      )}
       <img
-        onLoad={() => setLoading(false)}
+        ref={imageRef}
+        onLoad={handlerLoadImage}
+        onError={handlerError}
         onClick={() => setFull(true)}
-        className={`${!full && 'rounded-lg'} ${loading && 'hidden'} max-h-full cursor-pointer`}
-        src={`http://${process.env.REACT_APP_API}/api/v1/media/${message.id._serialized}`}
+        className={`${!full && 'rounded-lg'} ${
+          loading && 'hidden'
+        } max-h-full cursor-pointer`}
+        src={src}
         alt=''
       />
     </div>

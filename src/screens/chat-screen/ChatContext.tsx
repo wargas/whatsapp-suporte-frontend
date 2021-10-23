@@ -18,6 +18,8 @@ interface contextProps {
   setStatus: (status: string) => void;
   loadSuportes: () => void;
   loadSuporte: () => void;
+  audioVelocidade: number;
+  setAudioVelocidade: (value: number) => void
 }
 
 export const ChatContext = createContext<contextProps>({} as contextProps);
@@ -28,6 +30,7 @@ export function ChatProvider({ children }: any) {
   const [suporte, setSuporte] = useState<Suporte>({} as Suporte);
   const [loadingSuporte, setLoadingSuporte] = useState(false);
   const [status, setStatus] = useState('');
+  const [audioVelocidade, setAudioVelocidade] = useState(1)
 
   const { chat_id: id = null } = useParams<{ chat_id: string }>();
 
@@ -164,6 +167,8 @@ export function ChatProvider({ children }: any) {
         setLoadingSuporte,
         fila,
         setFila,
+        audioVelocidade,
+        setAudioVelocidade
       }}>
       {children}
     </ChatContext.Provider>
