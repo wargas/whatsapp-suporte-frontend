@@ -48,7 +48,7 @@ export function ChatHeader({ id }: any) {
         )}
       </div>
       <div>
-        <h1>{suporte.name || suporte.pushname || suporte.contact_id}</h1>
+        <h1>{suporte.pushname || suporte.name || suporte.contact_id}</h1>
         <div className='text-xs text-gray-500'>aberto</div>
       </div>
       <div className='cursor-pointer ml-auto  transition-all rounded-full hover:bg-gray-100'>
