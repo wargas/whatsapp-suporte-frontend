@@ -2,6 +2,7 @@ import {
   ChatAlt2Icon,
   DotsVerticalIcon,
 } from '@heroicons/react/outline';
+import { GrContactInfo } from 'react-icons/gr'
 import { Menu } from '@headlessui/react';
 import { useHistory } from 'react-router-dom';
 import { useAuth } from '../../providers/auth';
@@ -62,7 +63,7 @@ export function Sidebar() {
           <button 
             onClick={() => open(ListContatos)}
             className="p-3 transition-all hover:bg-gray-100 rounded-full"> 
-            <ChatAlt2Icon className='w-5 text-gray-900' />
+            <GrContactInfo className='w-5 text-gray-900' />
           </button>
         </div>
         <div className='ml-0'>
